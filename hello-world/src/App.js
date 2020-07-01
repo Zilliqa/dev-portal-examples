@@ -147,39 +147,7 @@ export default class App extends React.Component {
     }
 
   }
-
-  async test() {
-    const zilliqa = new Zilliqa('https://dev-api.zilliqa.com');
-    const subscriber = zilliqa.subscriptionBuilder.buildEventLogSubscriptions(
-      'wss://dev-ws.zilliqa.com',
-      {
-        // smart contract address you want to listen on  
-        addresses: [
-          '0x2ce491a0fd9e318b39172258101b7c836da7449b',
-          '0x167e3980e04eab1e89ff84523ae8c77e008932dc',
-        ],
-      },
-    );
-    
-    subscriber.emitter.on(StatusType.SUBSCRIBE_EVENT_LOG, (event) => {
-      // if subscribe success, it will echo the subscription info
-      console.log('get SubscribeEventLog echo: ', event);
-    });
-    
-    subscriber.emitter.on(MessageType.EVENT_LOG, (event) => {
-      // do what you want with new event log
-      console.log('get new event log: ', JSON.stringify(event));
-    });
-   
-    subscriber.emitter.on(MessageType.UNSUBSCRIBE, (event) => {
-      //if unsubscribe success, it will echo the unsubscription info
-      console.log('get unsubscribe event: ', event);
-    });
   
-    await subscriber.start();
-  }
-  
-
   async eventLogSubscription() {
     const zilliqa = new Zilliqa('https://dev-api.zilliqa.com');
     const subscriber = zilliqa.subscriptionBuilder.buildEventLogSubscriptions(
@@ -270,56 +238,3 @@ export default class App extends React.Component {
   }
 
 }
-
-// sendTransaction = async(contractAddress,recipientAddress, sendingAmount) => {
-//   let zilliqa;
-//   if(this.state.zilPayLogin =='true'){
-//     zilliqa = window.zilPay;
-//   }
-//   else{
-//     zilliqa = new Zilliqa('https://dev-api.zilliqa.com');
-//     let privkey = localStorage.getItem("private_key");
-//     zilliqa.wallet.addByPrivateKey(privkey);
-// }
-
-// const CHAIN_ID = 333;
-// const MSG_VERSION = 1;
-// const VERSION = bytes.pack(CHAIN_ID, MSG_VERSION);
-
-
-// const myGasPrice = units.toQa('1000', units.Units.Li); // Gas Price that will be used by all transactions
-// // let contractAddress = this.state.contractAddress;
-// contractAddress = contractAddress.substring(2);
-// // let recipientAddress = this.state.recipientAddress;
-// recipientAddress = fromBech32Address(recipientAddress);//converting to ByStr20 format
-// const ftAddr = toBech32Address(contractAddress);
-// try {
-//     const contract = zilliqa.contracts.at(ftAddr);
-//     const callTx = await contract.call(
-//         'Transfer',
-//         [
-//             {
-//                 vname: 'to',
-//                 type: 'ByStr20',
-//                 value: recipientAddress,
-//             },
-//             {
-//                 vname: 'amount',
-//                 type: 'Uint128',
-//                 value: sendingAmount,
-//             }
-//         ],
-//         {
-//             // amount, gasPrice and gasLimit must be explicitly provided
-//             version: VERSION,
-//             amount: new BN(0),
-//             gasPrice: myGasPrice,
-//             gasLimit: Long.fromNumber(10000),
-//         }
-//     );
-//     console.log(JSON.stringify(callTx.receipt, null, 4));
-
-// } catch (err) {
-//     console.log(err);
-// }
-// }
