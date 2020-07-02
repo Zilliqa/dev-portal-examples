@@ -1,4 +1,4 @@
-# Hello World Scilla Front-End Code
+# Hello World Scilla Front-End
 
 ## About
 

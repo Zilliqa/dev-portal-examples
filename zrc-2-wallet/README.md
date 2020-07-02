@@ -1,1 +1,1 @@
-# hello-world-scilla
+# ZRC2 Wallet

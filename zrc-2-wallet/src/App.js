@@ -1,9 +1,9 @@
 import React from 'react';
 import './App.css';
+import { decryptPrivateKey, getAddressFromPrivateKey } from '@zilliqa-js/crypto';
 
 const {Zilliqa} = require('@zilliqa-js/zilliqa');
 const zilliqa = new Zilliqa('https://dev-api.zilliqa.com');
-import { decryptPrivateKey, getAddressFromPrivateKey } from '@zilliqa-js/crypto';
 const {BN, Long, bytes, units} = require('@zilliqa-js/util');
 const {toBech32Address, fromBech32Address} = require('@zilliqa-js/crypto');
 const { StatusType, MessageType } = require('@zilliqa-js/subscriptions');
@@ -21,7 +21,8 @@ export default class App extends React.Component {
       encryptedWallet: "",
       privateKey:"",
       zilBalance:null,
-      tokenBalance:null
+      tokenBalance:null,
+      sendBtnText:"Send"
     };
     this.handleAddressChange = this.handleAddressChange.bind(this);
     this.handlePassphraseChange = this.handlePassphraseChange.bind(this);
@@ -38,6 +39,7 @@ export default class App extends React.Component {
   componentDidMount() {
     this.fetchZilBalance();
     this.fetchTokenBalance();
+    this.eventLogSubscription();
   }
 
   handleAddressChange(event) {
@@ -124,6 +126,7 @@ fetchTokenBalance = async() => {
 }
 
 sendTransaction = async() => {
+  this.setState({sendBtnText: "Sending..."})
   let contractAddress = localStorage.getItem("token_contract_address");
   let recipientAddress = this.state.sendingAddress;
   let sendingAmount = this.state.sendingAmount;
@@ -164,7 +167,7 @@ try {
         }
     );
     console.log(JSON.stringify(callTx.TranID));
-    this.eventLogSubscription();
+    window.location.reload(false);
 
 } catch (err) {
     console.log(err);
@@ -172,6 +175,7 @@ try {
 }
 
 async eventLogSubscription() {
+  if(localStorage.getItem("token_contract_address")){
   const zilliqa = new Zilliqa('https://dev-api.zilliqa.com');
   const subscriber = zilliqa.subscriptionBuilder.buildEventLogSubscriptions(
     'wss://dev-ws.zilliqa.com',
@@ -187,24 +191,30 @@ async eventLogSubscription() {
   });
   
   subscriber.emitter.on(MessageType.EVENT_LOG, (event) => {
-    console.log('get new event log: ', JSON.stringify(event));
+    this.fetchTokenBalance();
   });  
   await subscriber.start();
+}
 }
 
   render(){
     return (
       <div className="App">
-        <div> {`Current Token Contract Address : ${localStorage.getItem("token_contract_address")}`} </div>
+        <div> {`Current Token Contract Address : ${localStorage.getItem("token_contract_address")||""}`} </div>
         <p>Update Token Contract Address</p>
         <form onSubmit={this.handleTokenAddressSubmit}>
         <label>
           New Address <br/>
-          <input type="text" onChange={this.handleAddressChange} size="55" placeholder="Format: 0x47d9CEea9a2DA23dc6b2D96A16F7Fbf884580665"/>
+          <input type="text" onChange={this.handleAddressChange} size="65" placeholder="Format: 0x47d9CEea9a2DA23dc6b2D96A16F7Fbf884580665"/>
         </label><br/>
         <input type="submit" value="Submit" />
-        <hr></hr>
+        <hr/>
       </form>
+      <p> {`Current User Address : ${localStorage.getItem("userAddress") && toBech32Address(localStorage.getItem("userAddress"))||""}`} <br/>
+      ByStr20 Address : {localStorage.getItem("userAddress")}<br/>
+      Zilliqa Balance : {this.state.zilBalance}<br/>
+      Token Balance : {this.state.tokenBalance}
+      </p>
       <p>Upload Keystore File</p>
       <input type="file" name="file" onChange={(event)=>this.onChangeHandler(event)}/>
       <br/>
@@ -214,14 +224,9 @@ async eventLogSubscription() {
           <input type="password" onChange={this.handlePassphraseChange} size="20"/>
         </label><br/>
         <input type="submit" value="Submit" />
-        <hr></hr>
       </form>
-      <p> {`Current User Address : ${toBech32Address(localStorage.getItem("userAddress"))}`} <br/>
-      ByStr20 Address : {localStorage.getItem("userAddress")}<br/>
-      Zilliqa Balance : {this.state.zilBalance}
-      </p>
       <hr/>
-      <p> Token Balance : {this.state.tokenBalance} <br/><br/>
+      <p>
      Send Token
       </p>
         <label>
@@ -232,7 +237,7 @@ async eventLogSubscription() {
           Amount <br/>
           <input type="text" onChange={this.handleSendingAmountChange} size="25" placeholder = "Amount < Token Balance"/>
         </label><br/>
-        <button onClick={this.sendTransaction}>Send</button><br/><br/>
+        <button onClick={this.sendTransaction}>{this.state.sendBtnText}</button><br/><br/>
       </div>
       
     );
