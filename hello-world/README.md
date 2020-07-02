@@ -14,3 +14,25 @@ cd dev-portal-examples/hello-world
 npm install
 npm start
 ```
+## Steps To Use The Demo
+
+
+1. Connect zilpay
+
+<img src = "src/images/connect-zilpay.png">
+
+2. Update contract address to your Hello World contract address
+
+<img src = "src/images/update-address.png">
+
+3. Set Welcome Msg by calling et Hello
+
+<img src = "src/images/set-hello.png">
+
+4. Retrieve Welcome Msg by calling Get Hello
+
+<img src = "src/images/get-hello.png">
+
+5. The Welcome Msg gets updated!
+
+<img src = "src/images/current-msg.png">

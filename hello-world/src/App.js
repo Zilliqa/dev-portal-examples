@@ -12,25 +12,22 @@ export default class App extends React.Component {
     this.state = {
       contractAddress: '',
       setHelloValue: '',
-      welcomeMsg:'',
-      zilpayConnectStatus:false
+      welcomeMsg:''
     };
 
-    this.handleChange = this.handleChange.bind(this);
+    this.handleAddressChange = this.handleAddressChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleHelloChange = this.handleHelloChange.bind(this);
     this.setHello = this.setHello.bind(this);
     this.getHello = this.getHello.bind(this);
     this.connectZilpay = this.connectZilpay.bind(this);
-    this.checkZilpayConnection = this.checkZilpayConnection.bind(this);
   }
 
   componentDidMount() {
-    this.checkZilpayConnection();
   }
 
 
-  handleChange(event) {
+  handleAddressChange(event) {
     this.setState({contractAddress: event.target.value});
   }
 
@@ -49,10 +46,9 @@ export default class App extends React.Component {
     else{
       const isConnect = await window.zilPay.wallet.connect();
       if (isConnect) {
-        console.log("3")
         this.updateWelcomeMsg();
       } else {
-      throw new Error('user rejected');
+      alert("Not able to call setHello as transaction is rejected");
       }
     } 
   }
@@ -67,11 +63,6 @@ export default class App extends React.Component {
     const myGasPrice = units.toQa('1000', units.Units.Li); // Gas Price that will be used by all transactions
     contractAddress = contractAddress.substring(2);
     const ftAddr = toBech32Address(contractAddress);
-
-
-
-
-
     try {
         const contract = zilliqa.contracts.at(ftAddr);
         const callTx = await contract.call(
@@ -106,7 +97,7 @@ export default class App extends React.Component {
       if (isConnect) {
         this.getWelcomeMsg();
       } else {
-      throw new Error('user rejected');
+        alert("Not able to call setHello as transaction is rejected")
       }
     } 
   }
@@ -121,9 +112,6 @@ export default class App extends React.Component {
     const myGasPrice = units.toQa('1000', units.Units.Li); // Gas Price that will be used by all transactions
     contractAddress = contractAddress.substring(2);
     const ftAddr = toBech32Address(contractAddress);
-
-
-    
     try {
         const contract = zilliqa.contracts.at(ftAddr);
         const callTx = await contract.call(
@@ -139,15 +127,13 @@ export default class App extends React.Component {
             }
         );
         console.log(JSON.stringify(callTx.TranID));
-        this.eventLogSubscription();
-
-  
+        this.eventLogSubscription();  
     } catch (err) {
         console.log(err);
     }
 
   }
-  
+  // Code that listens to websocket and updates welcome message when getHello() gets called.
   async eventLogSubscription() {
     const zilliqa = new Zilliqa('https://dev-api.zilliqa.com');
     const subscriber = zilliqa.subscriptionBuilder.buildEventLogSubscriptions(
@@ -181,37 +167,22 @@ export default class App extends React.Component {
     try {
       await window.zilPay.wallet.connect();
       if(window.zilPay.wallet.isConnect){
-        this.setState({zilpayConnectStatus:true});
+        localStorage.setItem("zilpay_connect", true);
+        window.location.reload(false);
       } else {
-      console.warn('ZilPay not installed');
+      alert("Zilpay connection failed, try again...")
     }
     } catch (error) {}
-  }
-  async checkZilpayConnection(){
-    if (typeof window.zilPay !== 'undefined') {
-      if(window.zilPay.wallet.isConnect){
-        this.setState({zilpayConnectStatus:true});
-      }
-      // ZilPay user detected. You can now use the provider.
-      if(window.zilPay.wallet.net!="testnet"){
-        //Instruct user to change network to testnet
-      }
-    } 
-    else{
-      //Instruct the user to download zilpay
-    }
-  }
-  
+  }  
   render(){
     return (
       <div className="App">
-        {this.checkZilpayConnection}
         <div> {`Current Contract Address : ${localStorage.getItem("contract_address")}`} </div>
         <h3>Update Contract Address</h3>
         <form onSubmit={this.handleSubmit}>
         <label>
           New Address <br/>
-          <input type="text" onChange={this.handleChange} size="70"/>
+          <input type="text" onChange={this.handleAddressChange} size="70" placeholder="Format: 0x47d9CEea9a2DA23dc6b2D96A16F7Fbf884580665"/>
         </label><br/>
         <input type="submit" value="Submit" />
         <hr></hr>
@@ -230,11 +201,10 @@ export default class App extends React.Component {
         <button onClick={this.getHello}>Get Hello</button><br/><br/>
         <div> {`Current Welcome Msg : ${this.state.welcomeMsg}`} </div>
         <hr></hr>
-        {!this.state.zilpayConnectStatus && <button onClick={this.connectZilpay}>Connect Zilpay</button>}
+        {!localStorage.getItem("zilpay_connect") && <button onClick={this.connectZilpay}>Connect Zilpay</button>}
         <br/><br/>
       </div>
       
     );
   }
-
 }
