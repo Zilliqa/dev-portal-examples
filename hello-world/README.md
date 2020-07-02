@@ -25,7 +25,7 @@ npm start
 
 <img src = "src/images/update-address.png">
 
-3. Set Welcome Msg by calling et Hello
+3. Set Welcome Msg by calling Set Hello
 
 <img src = "src/images/set-hello.png">
 
