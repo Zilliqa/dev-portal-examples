@@ -5,8 +5,6 @@
 This repo contains the code for a zrc2 wallet, which allows a user to send and receive zrc2 tokens on the Zilliqa developer testnet (https://dev-api.zilliqa.com/).
 The Js-framework used in this example is React but the zilliqa related code is written in VanillaJS and can be used as such with another framework like Angular, Vue etc.
 
-The Js-framework used in this example is React but the zilliqa related code is written in VanillaJS and can be used as such with another framework like Angular, Vue etc.
-
 ## Setup
 
 ```
@@ -34,6 +32,6 @@ npm start
 
 <img src = "src/images/send-token.png">
 
-5. After the transaction is confirmed your balance gets updated automatically!
+5. After the transaction is confirmed your token and zil balances get updated automatically!
 
 <img src = "src/images/user-balance.png">
