@@ -60,7 +60,7 @@ export default class App extends React.Component {
     const CHAIN_ID = 333;
     const MSG_VERSION = 1;
     const VERSION = bytes.pack(CHAIN_ID, MSG_VERSION);   
-    const myGasPrice = units.toQa('1000', units.Units.Li); // Gas Price that will be used by all transactions
+    const myGasPrice = units.toQa('2000', units.Units.Li); // Gas Price that will be used by all transactions
     contractAddress = contractAddress.substring(2);
     const ftAddr = toBech32Address(contractAddress);
     try {
@@ -109,7 +109,7 @@ export default class App extends React.Component {
     const CHAIN_ID = 333;
     const MSG_VERSION = 1;
     const VERSION = bytes.pack(CHAIN_ID, MSG_VERSION);   
-    const myGasPrice = units.toQa('1000', units.Units.Li); // Gas Price that will be used by all transactions
+    const myGasPrice = units.toQa('2000', units.Units.Li); // Gas Price that will be used by all transactions
     contractAddress = contractAddress.substring(2);
     const ftAddr = toBech32Address(contractAddress);
     try {
