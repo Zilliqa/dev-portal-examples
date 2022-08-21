@@ -82,6 +82,8 @@ export default class App extends React.Component {
                 gasLimit: Long.fromNumber(10000),
             }
         );
+        console.log(JSON.stringify(callTx.ID));
+        this.eventLogSubscription(); 
   
     } catch (err) {
         console.log(err);
@@ -126,7 +128,7 @@ export default class App extends React.Component {
                 gasLimit: Long.fromNumber(10000),
             }
         );
-        console.log(JSON.stringify(callTx.TranID));
+        console.log(JSON.stringify(callTx.ID));
         this.eventLogSubscription();  
     } catch (err) {
         console.log(err);
